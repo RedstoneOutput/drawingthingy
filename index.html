@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang=en>
+    <link rel=stylesheet href=app/kleki.5a048cff.css>
+    <meta charset=UTF-8>
+    <title>Kleki - Paint Tool</title>
+    <base href=/>
+    <meta name=description content="Paint online with natural brushes, layers, and edit your drawings. Open-source, free. Import, save, and upload images. Inspired by Paint Tool SAI, Oekaki Shi Painter, and Harmony.">
+    <meta name=keywords content="draw, digital painting, draw online, html5, canvas, open-source, painting, sketch, free, sketching, bitbof">
+    <meta name=viewport content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name=mobile-web-app-capable content=yes>
+    <meta name=application-name content=Kleki>
+    <meta name=author content=bitbof>
+    <meta name=color-scheme content="dark light">
+    <link rel=apple-touch-icon href=app/ios_icon.04e4cea6.png>
+    <link rel=icon type=image/png sizes=16x16 href=app/icon-16x16-min.0ae42522.png>
+    <link rel=icon type=image/png sizes=32x32 href=app/icon-32x32-min.dfda724e.png>
+    <link rel=icon type=image/png sizes=96x96 href=app/icon-96x96-min.bb15742a.png>
+    <meta property=og:title content="Kleki - Paint Tool">
+    <meta property=og:type content=website>
+    <meta property=og:url content=https://kleki.com/>
+    <meta property=og:image content=https://kleki.com/app/kleki-logomark-512x512.fd5046cb.png>
+    <meta property=og:description content="Free web-app for painting and editing. Features different brushes, layers, filters, import, upload, pressure sensitivity, and more.">
+    <meta property=og:site_name content=Kleki>
+    <script>
+        var theme = localStorage.getItem("klecks-theme") || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        "dark" === theme && document.documentElement.classList.add("kl-theme-dark");
+    </script>
+    <link rel=stylesheet href=app/kleki.cdf89d3d.css>
+    <body>
+        <div id=loading-screen>
+            <div>Loading</div>
+        </div>
+        <link rel=stylesheet href=app/kleki.af1eb05d.css>
+        <script>
+            function onError() {
+                document.getElementById("loading-screen").innerHTML = '<div class="error">⚠️ Failed to load Kleki. Please reload. <a href="https://kleki.com/help/#failed-to-initialize">More help</a><br>Version: 0.10.1.3 - 19d5575eb6e</div>'
+            }
+        </script>
+        <script src=app/kleki.c563c2fd.js onerror=onError() nomodule defer></script>
+        <script type=module src=app/kleki.d682c346.js onerror=onError()></script>
