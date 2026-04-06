@@ -1,10 +1,211 @@
 <!DOCTYPE html>
 <html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Paint</title>
+    <style>
+        :root {
+            --bg-color: #222;
+            --panel-color: #333;
+            --accent-color: #444;
+            --text-color: #ddd;
+        }
 
-            </div>
-            <iframe src="https://kleki.com/"></iframe>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: var(--bg-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            height: 100vh;
+        }
 
+        #toolbar {
+            width: 60px;
+            background: var(--panel-color);
+            border-right: 1px solid #111;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 0;
+            gap: 15px;
+            z-index: 10;
+        }
+
+        .tool-btn {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-color);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+        }
+
+        #canvas-container {
+            flex-grow: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: auto;
+            background: #1a1a1a;
+        }
+
+        canvas {
+            position: absolute;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            cursor: crosshair;
+            image-rendering: pixelated;
+        }
+
+        #side-panel {
+            width: 240px;
+            background: var(--panel-color);
+            border-left: 1px solid #111;
+            padding: 20px;
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .color-preview {
+            width: 100%;
+            height: 40px;
+            border: 2px solid #555;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toolbar">
+        <button class="tool-btn" onclick="setTool('brush')">B</button>
+        <button class="tool-btn" onclick="setTool('eraser')">E</button>
+        <button class="tool-btn" onclick="clearCanvas()">C</button>
     </div>
 
+    <div id="canvas-container">
+        <canvas id="paintCanvas"></canvas>
+    </div>
+
+    <div id="side-panel">
+        <div class="control-group">
+            <label>Color</label>
+            <input type="color" id="colorPicker" value="#ffffff">
+        </div>
+
+        <div class="control-group">
+            <label>Size: <span id="sizeVal">10</span>px</label>
+            <input type="range" id="sizeSlider" min="1" max="100" value="10">
+        </div>
+
+        <div class="control-group">
+            <label>Opacity: <span id="opacityVal">100</span>%</label>
+            <input type="range" id="opacitySlider" min="1" max="100" value="100">
+        </div>
+
+        <hr style="width:100%; border:0; border-top:1px solid #444;">
+
+        <button onclick="saveImage()" style="padding:10px; cursor:pointer; background:#555; color:white; border:none; border-radius:4px;">Save PNG</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('paintCanvas');
+        const ctx = canvas.getContext('2d');
+        const sizeSlider = document.getElementById('sizeSlider');
+        const colorPicker = document.getElementById('colorPicker');
+        const opacitySlider = document.getElementById('opacitySlider');
+
+        let drawing = false;
+        let currentTool = 'brush';
+        let lastX = 0;
+        let lastY = 0;
+
+        function init() {
+            canvas.width = 1200;
+            canvas.height = 800;
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+            
+            // Fill background white initially
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function startDrawing(e) {
+            drawing = true;
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+
+        function draw(e) {
+            if (!drawing) return;
+
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(e.offsetX, e.offsetY);
+
+            if (currentTool === 'eraser') {
+                ctx.globalCompositeOperation = 'destination-out';
+            } else {
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.strokeStyle = colorPicker.value;
+            }
+
+            ctx.lineWidth = sizeSlider.value;
+            ctx.globalAlpha = opacitySlider.value / 100;
+            ctx.stroke();
+
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+
+        function stopDrawing() {
+            drawing = false;
+            ctx.closePath();
+        }
+
+        function setTool(tool) {
+            currentTool = tool;
+        }
+
+        function clearCanvas() {
+            if(confirm('Clear entire canvas?')) {
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+
+        function saveImage() {
+            const link = document.createElement('a');
+            link.download = 'painting.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        // Event Listeners
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        sizeSlider.oninput = () => document.getElementById('sizeVal').innerText = sizeSlider.value;
+        opacitySlider.oninput = () => document.getElementById('opacityVal').innerText = opacitySlider.value;
+
+        init();
+    </script>
 </body>
 </html>
